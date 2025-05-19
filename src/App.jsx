@@ -28,13 +28,16 @@ function App() {
     setProducts(prev => prev.filter(p => p.id !== id));
   }, []);
 
-  const filteredProducts = useMemo(() => {
-  if (!searchTerm) return products;
-  return products.filter(
-    p =>
-      p.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.id.toString() === searchTerm.trim()
-  );
+const filteredProducts = useMemo(() => {
+  if (!searchTerm.trim()) return products;
+
+  const term = searchTerm.toLowerCase().trim();
+
+  return products.filter(p => {
+    const descripcionMatch = p.descripcion?.toLowerCase().includes(term);
+    const idMatch = p.id.toString() === term;
+    return descripcionMatch || idMatch;
+  });
 }, [products, searchTerm]);
 
   return (

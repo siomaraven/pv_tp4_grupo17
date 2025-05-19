@@ -89,11 +89,12 @@ div {
 .header-search {
   position: sticky;
   top: 0;
-  background-color: #3fc0fc
+  background-color: #3fc0fc;
   z-index: 1000;
   padding: 10px 20px;
   border-bottom: 1px solid #ccc;
 }
+
 input[type="text"] {
   width: 100%;
   padding: 8px;
