@@ -10,17 +10,20 @@ function App() {
   const [editingProduct, setEditingProduct] = useState(null);
 
   useEffect(() => {
-    console.log('Productos actualizados:', products);
+    localStorage.setItem('productos', JSON.stringify(products));
   }, [products]);
+
+  useEffect(() => {
+    const savedProducts = JSON.parse(localStorage.getItem('productos')) || [];
+    setProducts(savedProducts);
+  }, []);
 
   const addProduct = useCallback((product) => {
     setProducts(prev => [...prev, product]);
   }, []);
 
-  const editProduct = useCallback((updatedProduct) => {
-    setProducts(prev =>
-      prev.map(p => (p.id === updatedProduct.id ? updatedProduct : p))
-    );
+const editProduct = useCallback((updatedProduct) => {
+    setProducts(prev => prev.map(p => (p.id === updatedProduct.id ? updatedProduct : p)));
     setEditingProduct(null);
   }, []);
 
@@ -28,17 +31,11 @@ function App() {
     setProducts(prev => prev.filter(p => p.id !== id));
   }, []);
 
-const filteredProducts = useMemo(() => {
-  if (!searchTerm.trim()) return products;
-
-  const term = searchTerm.toLowerCase().trim();
-
-  return products.filter(p => {
-    const descripcionMatch = p.descripcion?.toLowerCase().includes(term);
-    const idMatch = p.id.toString() === term;
-    return descripcionMatch || idMatch;
-  });
-}, [products, searchTerm]);
+  const filteredProducts = useMemo(() => {
+    if (!searchTerm.trim()) return products;
+    const term = searchTerm.toLowerCase().trim();
+    return products.filter(p => p.descripcion?.toLowerCase().includes(term) || p.id.toString() === term);
+  }, [products, searchTerm]);
 
   return (
     <>
@@ -55,6 +52,7 @@ const filteredProducts = useMemo(() => {
           editProduct={editProduct}
           editingProduct={editingProduct}
           setEditingProduct={setEditingProduct}
+          products={products}
         />
         <ProductList
           products={filteredProducts}
