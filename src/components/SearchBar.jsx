@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 function SearchBar({ searchTerm, setSearchTerm }) {
-  const handleChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
+  const handleChange = useCallback((e) => {
+    setSearchTerm(e.target.value.trim());
+  }, [setSearchTerm]);
 
   return (
     <input
