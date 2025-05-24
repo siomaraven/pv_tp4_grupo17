@@ -13,3 +13,6 @@ Desarrollo del trabajo práctico 4.
  - calcular automáticamente el precio con descuento.
 
  Continuamos trabajando con Vite con plantilla de React.
+
+ 24/05/2025:
+ El proyecto continúa optimizándose, haciendo uso de ramas para una mejor distribución y orden del contenido
