@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-function ProductForm({ addProduct, editProduct, editingProduct, setEditingProduct }) {
+function ProductForm({ addProduct, editProduct, editingProduct, setEditingProduct, products }) {
   const [formData, setFormData] = useState({
     id: '',
     descripcion: '',
@@ -31,20 +31,15 @@ function ProductForm({ addProduct, editProduct, editingProduct, setEditingProduc
     return (precio * (1 - desc / 100)).toFixed(2);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validar que id sea único si es nuevo producto
-    if (!editingProduct && formData.id === '') {
-      alert('El ID es obligatorio');
+    // validamos que el id exista
+    if (!editingProduct && formData.id.trim() === '') {
+      alert('El ID es obligatorio de agregar.');
       return;
     }
-
+    // validamos que no se repita
     if (!editingProduct && products.some (p => p.id === formData.id.trim())){
       alert("El ID ya existe, por favor use otro.");
       return;
@@ -65,7 +60,7 @@ function ProductForm({ addProduct, editProduct, editingProduct, setEditingProduc
     }
 
     const newProduct = {
-      id: editingProduct ? formData.id : formData.id.trim(),
+      id: formData.id.trim(),
       descripcion: formData.descripcion,
       precioUnitario: Number(formData.precioUnitario),
       descuento: Number(formData.descuento),
@@ -89,68 +84,17 @@ function ProductForm({ addProduct, editProduct, editingProduct, setEditingProduc
     });
   };
 
-  const handleCancel = () => {
-    setEditingProduct(null);
-    setFormData({
-      id: '',
-      descripcion: '',
-      precioUnitario: '',
-      descuento: '',
-      stock: ''
-    });
-  };
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
+    <form onSubmit={handleSubmit}>
       <h3>{editingProduct ? 'Editar Producto' : 'Agregar Producto'}</h3>
-      <input
-        type="text"
-        name="id"
-        placeholder="ID"
-        value={formData.id}
-        onChange={handleChange}
-        disabled={editingProduct} // No cambiar el ID al editar
-        style={{ width: '100%', marginBottom: '8px' }}
-      />
-      <input
-        type="text"
-        name="descripcion"
-        placeholder="Descripción"
-        value={formData.descripcion}
-        onChange={handleChange}
-        style={{ width: '100%', marginBottom: '8px' }}
-      />
-      <input
-        type="number"
-        name="precioUnitario"
-        placeholder="Precio Unitario"
-        value={formData.precioUnitario}
-        onChange={handleChange}
-        style={{ width: '100%', marginBottom: '8px' }}
-      />
-      <input
-        type="number"
-        name="descuento"
-        placeholder="Descuento (%)"
-        value={formData.descuento}
-        onChange={handleChange}
-        style={{ width: '100%', marginBottom: '8px' }}
-      />
-      <input
-        type="number"
-        name="stock"
-        placeholder="Stock"
-        value={formData.stock}
-        onChange={handleChange}
-        style={{ width: '100%', marginBottom: '8px' }}
-      />
-      <p>Precio con Descuento: <b>{precioConDescuento()}</b></p>
+      <input type="text" name="id" placeholder="ID" value={formData.id} onChange={(e) => setFormData({ ...formData, id: e.target.value })} disabled={editingProduct} />
+      <input type="text" name="descripcion" placeholder="Descripción" value={formData.descripcion} onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })} />
+      <input type="number" name="precioUnitario" placeholder="Precio Unitario" value={formData.precioUnitario} onChange={(e) => setFormData({ ...formData, precioUnitario: e.target.value })} />
+      <input type="number" name="descuento" placeholder="Descuento (%)" value={formData.descuento} onChange={(e) => setFormData({ ...formData, descuento: e.target.value })} />
+      <input type="number" name="stock" placeholder="Stock" value={formData.stock} onChange={(e) => setFormData({ ...formData, stock: e.target.value })} />
+      <p>Precio con Descuento: <b>${formData.precioUnitario * (1 - formData.descuento / 100)}</b></p>
       <button type="submit">{editingProduct ? 'Guardar Cambios' : 'Agregar'}</button>
-      {editingProduct && (
-        <button type="button" onClick={handleCancel} style={{ marginLeft: '10px' }}>
-          Cancelar
-        </button>
-      )}
     </form>
   );
 }
