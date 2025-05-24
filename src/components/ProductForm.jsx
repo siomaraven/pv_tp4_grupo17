@@ -45,6 +45,11 @@ function ProductForm({ addProduct, editProduct, editingProduct, setEditingProduc
       return;
     }
 
+    if (!editingProduct && products.some (p => p.id === formData.id.trim())){
+      alert("El ID ya existe, por favor use otro.");
+      return;
+    }
+
     // Validar datos mínimos
     if (
       !formData.descripcion ||
