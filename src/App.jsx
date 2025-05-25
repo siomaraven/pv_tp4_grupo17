@@ -5,7 +5,11 @@ import SearchBar from './components/SearchBar';
 import './css/style.css';
 
 function App() {
-  const [products, setProducts] = useState([]);
+
+  const [products, setProducts] = useState(() => {
+    const saved = localStorage.getItem('productos');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [searchTerm, setSearchTerm] = useState('');
   const [editingProduct, setEditingProduct] = useState(null);
 
@@ -13,16 +17,11 @@ function App() {
     localStorage.setItem('productos', JSON.stringify(products));
   }, [products]);
 
-  useEffect(() => {
-    const savedProducts = JSON.parse(localStorage.getItem('productos')) || [];
-    setProducts(savedProducts);
-  }, []);
-
   const addProduct = useCallback((product) => {
     setProducts(prev => [...prev, product]);
   }, []);
 
-const editProduct = useCallback((updatedProduct) => {
+  const editProduct = useCallback((updatedProduct) => {
     setProducts(prev => prev.map(p => (p.id === updatedProduct.id ? updatedProduct : p)));
     setEditingProduct(null);
   }, []);
@@ -39,14 +38,12 @@ const editProduct = useCallback((updatedProduct) => {
 
   return (
     <>
-      {/* Barra fija arriba */}
-      <div className="header-search">
-        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      </div>
-
-      {/* Contenido principal */}
-      <div className="main-content" style={{ padding: '20px', maxWidth: '600px', margin: 'auto', paddingTop: '100px' }}>
+      <div className="container-main">
         <h1>Gestor de Productos</h1>
+        <div className="div-search">
+          <h2>Búsqueda de Productos</h2>
+          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        </div>
         <ProductForm
           addProduct={addProduct}
           editProduct={editProduct}
@@ -54,6 +51,8 @@ const editProduct = useCallback((updatedProduct) => {
           setEditingProduct={setEditingProduct}
           products={products}
         />
+      </div>
+      <div className="container-list">
         <ProductList
           products={filteredProducts}
           setEditingProduct={setEditingProduct}
@@ -61,7 +60,7 @@ const editProduct = useCallback((updatedProduct) => {
         />
       </div>
     </>
-  );
+  )
 }
 
 export default App;

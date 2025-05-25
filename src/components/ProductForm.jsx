@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-
+import  { useState, useEffect } from 'react';
+import '../css/style.css';
 function ProductForm({ addProduct, editProduct, editingProduct, setEditingProduct, products }) {
   const [formData, setFormData] = useState({
     id: '',
