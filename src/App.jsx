@@ -1,35 +1,67 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import ProductForm from './components/ProductForm';
+import ProductList from './components/ProductList';
+import SearchBar from './components/SearchBar';
+import './css/style.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const [products, setProducts] = useState(() => {
+    const saved = localStorage.getItem('productos');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [editingProduct, setEditingProduct] = useState(null);
+
+  useEffect(() => {
+    localStorage.setItem('productos', JSON.stringify(products));
+  }, [products]);
+
+  const addProduct = useCallback((product) => {
+    setProducts(prev => [...prev, product]);
+  }, []);
+
+  const editProduct = useCallback((updatedProduct) => {
+    setProducts(prev => prev.map(p => (p.id === updatedProduct.id ? updatedProduct : p)));
+    setEditingProduct(null);
+  }, []);
+
+  const deleteProduct = useCallback((id) => {
+    setProducts(prev => prev.filter(p => p.id !== id));
+  }, []);
+
+  const filteredProducts = useMemo(() => {
+    if (!searchTerm.trim()) return products;
+    const term = searchTerm.toLowerCase().trim();
+    return products.filter(p => p.descripcion?.toLowerCase().includes(term) || p.id.toString() === term);
+  }, [products, searchTerm]);
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="container-main">
+        <h1>Gestor de Productos</h1>
+        <div className="div-search">
+          <h2>Búsqueda de Productos</h2>
+          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        </div>
+        <ProductForm
+          addProduct={addProduct}
+          editProduct={editProduct}
+          editingProduct={editingProduct}
+          setEditingProduct={setEditingProduct}
+          products={products}
+        />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+      <div className="container-list">
+        <ProductList
+          products={filteredProducts}
+          setEditingProduct={setEditingProduct}
+          deleteProduct={deleteProduct}
+        />
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
 
-export default App
+export default App;
+
