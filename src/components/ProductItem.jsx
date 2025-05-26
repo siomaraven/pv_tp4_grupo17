@@ -24,8 +24,8 @@ function ProductItem({ product, setEditingProduct, deleteProduct }) {
             <button onClick={() => setShowConfirm(true)}>Eliminar</button>
           ) : (
             <span>
-              <button onClick={() => deleteProduct(product.id)}>Confirmar</button>
-              <button onClick={() => setShowConfirm(false)}>Cancelar</button>
+              <button style={{ background: 'green', color: 'white' }} onClick={() => deleteProduct(product.id)}>Confirmar</button>
+              <button style={{ background: 'red', color: 'white' }} onClick={() => setShowConfirm(false)}>Cancelar</button>
             </span>
           )}
         </div>
